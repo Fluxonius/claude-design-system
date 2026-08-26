@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.DS_Store
+# generated artifacts — these belong in the consuming project, not here
+tokens.css
+tokens.json
+ds-components.css
+ds-theme.css
+tailwind.config.js
+proof*.html
+.ds-drift.json
+*.pre-ds

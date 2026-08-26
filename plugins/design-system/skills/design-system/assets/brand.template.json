@@ -1,0 +1,25 @@
+{
+  "$comment": "The complete set of personalizable inputs. Everything else is system law. Copy to your project root as brand.json, edit, then run: python scripts/build_tokens.py brand.json --out-dir ./src/styles",
+  "name": "Untitled Product",
+  "primary": "#3D5A80",
+  "radius": "soft",
+  "density": "default",
+  "iconSet": "lucide",
+  "fontPreset": "grotesk",
+  "fonts": {},
+  "borderWeight": "hairline",
+  "prefix": "ds",
+  "$options": {
+    "primary": "any chromatic hex; greyscale is rejected",
+    "radius": ["sharp", "soft", "round"],
+    "density": ["default", "compact"],
+    "iconSet": ["phosphor", "lucide", "remix"],
+    "borderWeight": ["hairline", "medium", "bold"],
+    "fontPreset": {
+      "grotesk": "Geist / Geist / Geist Mono — default, precise and neutral",
+      "editorial": "Instrument Serif / Inter / IBM Plex Mono — serif display",
+      "technical": "IBM Plex Sans / IBM Plex Sans / IBM Plex Mono — engineered"
+    },
+    "fonts": "optional per-slot override of the preset. Slots: display, text, mono. A serif in the text slot is rejected; put serif faces in display."
+  }
+}
