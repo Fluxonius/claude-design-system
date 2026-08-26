@@ -4,7 +4,7 @@ description: Build UI that conforms to one consistent white-label design system 
 license: Complete terms in LICENSE.txt
 ---
 
-# Design System
+# Design System — generate, apply, enforce
 
 A white-label system. Every product built with it is recognisably the same system,
 personalised along a deliberately narrow set of axes.

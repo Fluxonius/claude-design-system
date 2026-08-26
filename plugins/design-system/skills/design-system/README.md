@@ -1,12 +1,15 @@
-# Design System
+# Design System — generate, apply, enforce
 
-A white-label design system for Claude. One brand file produces a mathematically
-derived, contrast-audited token set and a component stylesheet — and a set of
-tools that check whether your code actually uses them.
+A white-label design system for Claude, in three workflows:
 
-The point is **consistency you can verify**, not a style you have to trust. A
-screen built today and one built in six months should be indistinguishable, and
-you should be able to prove it rather than eyeball it.
+- **Generate** — `brand.json` produces a contrast-audited token set, a component
+  stylesheet, a Tailwind theme and a proof sheet
+- **Apply** — to a new project, or over an existing one
+- **Enforce** — conformance linting and drift tracking
+
+The third is what makes the first two hold. A screen built today and one built in
+six months should be indistinguishable, and you should be able to **prove** it
+rather than eyeball it.
 
 ---
 

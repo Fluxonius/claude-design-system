@@ -1,10 +1,20 @@
 {
   "name": "design-system",
-  "description": "Build UI on one consistent white-label design system: generate contrast-audited tokens from a brand file, adopt them in a new or existing project, and lint code for conformance.",
+  "displayName": "Design System — generate, apply, enforce",
+  "description": "Generate a contrast-audited design system from one brand file, apply it to a new or existing project, and enforce conformance in code.",
   "version": "0.9.0",
-  "author": { "name": "Fluxonius" },
+  "author": {
+    "name": "Fluxonius"
+  },
   "homepage": "https://github.com/Fluxonius/claude-design-system",
   "repository": "https://github.com/Fluxonius/claude-design-system",
   "license": "Apache-2.0",
-  "keywords": ["design-system", "design-tokens", "css", "tailwind", "ui", "accessibility"]
+  "keywords": [
+    "design-system",
+    "design-tokens",
+    "css",
+    "tailwind",
+    "ui",
+    "accessibility"
+  ]
 }

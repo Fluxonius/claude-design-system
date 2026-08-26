@@ -1,6 +1,6 @@
 {
   "name": "fluxonius",
-  "description": "Design tooling for Claude — a verifiable white-label design system.",
+  "description": "Design tooling for Claude. Generate, apply and enforce a white-label design system.",
   "owner": {
     "name": "Fluxonius",
     "url": "https://github.com/Fluxonius"
@@ -8,13 +8,25 @@
   "plugins": [
     {
       "name": "design-system",
+      "displayName": "Design System — generate, apply, enforce",
       "source": "./plugins/design-system",
-      "description": "Build UI on one consistent white-label design system: generate contrast-audited tokens from a brand file, adopt them in a new or existing project, and lint code for conformance.",
+      "description": "Generate a contrast-audited design system from one brand file, apply it to a new or existing project, and enforce conformance in code.",
       "version": "0.9.0",
-      "author": { "name": "Fluxonius" },
+      "author": {
+        "name": "Fluxonius"
+      },
       "repository": "https://github.com/Fluxonius/claude-design-system",
       "license": "Apache-2.0",
-      "keywords": ["design-system", "design-tokens", "css", "tailwind", "ui", "accessibility", "wcag", "theming"],
+      "keywords": [
+        "design-system",
+        "design-tokens",
+        "css",
+        "tailwind",
+        "ui",
+        "accessibility",
+        "wcag",
+        "theming"
+      ],
       "category": "design"
     }
   ]

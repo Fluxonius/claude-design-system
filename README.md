@@ -1,11 +1,18 @@
-# claude-design-system
+# Design System — generate, apply, enforce
 
 A verifiable white-label design system for Claude, distributed as a Claude Code
 plugin marketplace.
 
-One brand file produces a mathematically derived, contrast-audited token set and
-a component stylesheet — plus tools that check whether your code actually uses
-them. The point is **consistency you can prove**, not a style you have to trust.
+Three workflows, and nothing else:
+
+- **Generate** — one brand file produces a contrast-audited token set, a
+  component stylesheet, a Tailwind theme and a proof sheet
+- **Apply** — to a new project, or over an existing one, overriding whatever it
+  had before
+- **Enforce** — lint code for conformance and track drift over time
+
+Most things called a design system do the first two. The third is the point:
+consistency you can prove, not a style you have to trust.
 
 ## Install
 
