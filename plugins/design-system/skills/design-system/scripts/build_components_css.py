@@ -466,7 +466,6 @@ def sheet(p: str) -> str:
 .{p}-table th {{
   height: var(--{p}-control-h-sm);
   padding: 0 var(--{p}-space-3);
-  text-align: left;
   background: transparent;
   font-size: var(--{p}-font-size-2xs);
   font-weight: 500;
@@ -481,12 +480,35 @@ def sheet(p: str) -> str:
 .{p}-table tbody tr:last-child td {{ border-bottom: none; }}
 .{p}-table tbody tr:hover {{ background: var(--{p}-surface-hover); }}
 .{p}-table tr[aria-selected="true"] {{ background: var(--{p}-accent-subtle); }}
-/* Numeric columns.
+/* ---- column alignment law -------------------------------------------------
+ * Alignment is a property of the COLUMN, so every rule below sets `th` and
+ * `td` together and they cannot be given different values. That is exactly
+ * what went wrong before: `.{p}-table th` (0,1,1) silently outranked
+ * `.{p}-num` (0,1,0), so a numeric header stayed left while its own cells went
+ * right -- in every table ever built with this system, the proof sheet
+ * included. Keep each selector paired; splitting one reintroduces the bug.
  *
- * Alignment belongs to the whole column; tabular mono belongs only to the
- * DIGITS. A header cell contains a word, so mono does nothing for it except
- * break font consistency with every other header in the table. Scoping the
- * font to `td` is the fix -- `.{p}-num` on a `th` gives alignment alone.
+ * 1. Left is the default, for every column.
+ * 2. Quantities and the actions column go right. Right-aligned figures are
+ *    what let you compare magnitude by scanning digits, which is why this
+ *    pairs with tabular-nums below.
+ * 3. The row identifier is the exception. An invoice number or an ID is a
+ *    LABEL, not a magnitude -- nobody sums it or compares its digits -- so the
+ *    first column, or the first after a select box, stays left even when it
+ *    carries `.{p}-num`. It keeps the tabular figures either way.
+ */
+.{p}-table th, .{p}-table td {{ text-align: left; }}
+.{p}-table th.{p}-num, .{p}-table td.{p}-num,
+.{p}-table th.{p}-table-actions, .{p}-table td.{p}-table-actions {{
+  text-align: right;
+}}
+.{p}-table th:first-child.{p}-num, .{p}-table td:first-child.{p}-num,
+.{p}-table .{p}-table-select + th.{p}-num,
+.{p}-table .{p}-table-select + td.{p}-num {{ text-align: left; }}
+
+/* Outside a table -- Number Input, a `dd` in a description list -- `.{p}-num`
+ * still right-aligns on its own. Tabular mono belongs to the DIGITS, never to
+ * the header word above them, so the font stays scoped to `td`.
  */
 .{p}-num {{ text-align: right; }}
 td.{p}-num, .{p}-table td.{p}-num {{

@@ -251,12 +251,18 @@ ACHROMATIC_C = 0.02  # below this, hue angle is numerically meaningless
 def accent_ramp_from_hex(primary_hex):
     _, c, h = rgb_to_oklch(hex_to_rgb(primary_hex))
     if c < ACHROMATIC_C:
-        raise SystemExit(
-            f"`primary` is {primary_hex}, which is effectively greyscale "
-            f"(chroma {c:.3f}).\nThe accent ramp needs a real hue to derive from, and the "
-            "neutral ramp is\nalready a locked warm grey. Pick a chromatic brand colour; "
-            "if the brand is\ngenuinely monochrome, use a restrained near-neutral such as "
-            "#3D5A80 or #6B5B4E."
+        # Below this chroma the measured hue is numerical noise -- #000 reads as
+        # hue 0 (pink), #fff as hue 90 (olive) -- so deriving the ramp from it
+        # would make the accent depend on rounding rather than on the brand.
+        # Pin to the neutral hue instead: deterministic, and the full AA audit
+        # still passes. The clamp below floors the chroma to MIN_CHROMA.
+        h = NEUTRAL_HUE
+        print(
+            f"warning: `primary` {primary_hex} is greyscale (chroma {c:.3f}).\n"
+            f"  Accent floored to chroma {MIN_CHROMA} at the neutral hue.\n"
+            "  Links, focus and selection will read as warm grey -- pair links\n"
+            "  with underlines so colour is not the only signal.",
+            file=sys.stderr,
         )
     return build_ramp(h, max(MIN_CHROMA, min(MAX_CHROMA, c))), h
 

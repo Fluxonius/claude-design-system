@@ -84,7 +84,7 @@ products built on this look like siblings rather than strangers.
 
 | Knob | Options |
 |---|---|
-| `primary` | any chromatic hex — greyscale is rejected |
+| `primary` | any hex — hue kept, chroma clamped to the house range; greyscale adapts to a near-neutral accent with a warning |
 | `radius` | `sharp` · `soft` · `round` |
 | `density` | `default` · `compact` |
 | `iconSet` | `phosphor` · `lucide` · `remix` |

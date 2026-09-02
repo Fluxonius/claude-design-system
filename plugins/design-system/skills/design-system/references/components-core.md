@@ -505,13 +505,34 @@ clipping ancestor exists.)
 Rows tint on hover **always**, not only when clickable: a full-width row at 48px
 is hard to track across without it.
 
-**Rules.** Numeric columns right-align **in both header and body**, but only the
-body cells take `font-mono` with tabular figures. A header is a word, not a
-number: putting it in mono breaks font consistency with every other header for
-no benefit. Alignment is a column property; figure rendering is a digit
-property, and conflating them is the usual mistake here.
-Text left-aligns. Sticky header on scroll. Requires an explicit empty state and
-a skeleton loading state at `row-h`.
+**Rules — the column alignment law.** Alignment belongs to the **column**, never
+to a cell. Whatever a column does, its header does too, so the class goes on the
+`th` *and* on every `td` beneath it.
+
+1. **Left is the default**, for every column.
+2. **Quantities right-align**, header included. Right-aligned figures are what
+   let you compare magnitude by scanning digits — which is why this pairs with
+   tabular figures. The actions column right-aligns too.
+3. **The row identifier is the exception.** An invoice number, an order ID, a
+   year: these are *labels*, not magnitudes. Nobody sums them or compares their
+   digit columns, and the first column anchors the row, so it stays **left even
+   when numeric**. In practice that is the first column, or the first after a
+   select-box column. It keeps tabular figures either way.
+
+Only body cells take `font-mono`. A header is a word, not a number: putting it
+in mono breaks font consistency with every other header for no benefit.
+Alignment is a column property; figure rendering is a digit property, and
+conflating them is the usual mistake here.
+
+The stylesheet welds `th` and `td` together in every alignment rule, so the two
+cannot be given different values — a numeric header silently staying left above
+right-aligned cells was a real bug in this system, caused by `.ds-table th`
+outranking `.ds-num` on specificity. What CSS cannot enforce is an author
+writing the class on only one of them, so `lint_conformance.py` reports a split
+column as `table-column-alignment-split`.
+
+Sticky header on scroll. Requires an explicit empty state and a skeleton
+loading state at `row-h`.
 
 **Don't:**
 - Zebra-stripe — `border-subtle` is the divider
@@ -521,7 +542,11 @@ a skeleton loading state at `row-h`.
 - Wrap the table in a bordered, radiused container
 - Inset the row dividers
 - Let 12 columns squeeze instead of scrolling horizontally with a pinned first column
-- Right-align text or left-align numbers
+- Right-align text, or left-align a quantity
+- Right-align the row-identifier column because it happens to be numeric — an
+  ID is a label; only quantities right-align
+- Put an alignment class on the `td` but not the `th` (or the reverse) — the
+  column splits and the linter fails the build
 - Use proportional figures in numeric columns (digits jitter between rows)
 - Put a numeric column's *header* in `font-mono` — align it, but leave the font alone
 

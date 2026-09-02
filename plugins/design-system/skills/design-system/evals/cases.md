@@ -43,6 +43,42 @@ Two things to measure per case:
 | 19 | Regenerate the tokens, I changed the brand colour | build_tokens.py |
 | 20 | Build a landing page hero | core + layout |
 
+Every **building** case above now opens with the brand gate when the project has
+no `brand.json`: ask house-defaults-or-customize, write the brand file, then
+build. Cases 11-13 are the control group — they are read-only, so the gate must
+stay silent.
+
+## Brand gate
+
+The gate is asked once per project, and only when the task will produce UI.
+Getting this wrong in either direction is a failure: blocking an audit is as
+bad as silently picking a brand for a build.
+
+| # | Setup | Prompt | Expected |
+|---|---|---|---|
+| 27 | no `brand.json` | Build me a dashboard | **asks** default-vs-customize *before* any UI; writes `brand.json`; then builds |
+| 28 | `brand.json` present | Build me a dashboard | **no question** — reads the file and builds |
+| 29 | no `brand.json` | Is this palette accessible? | **no question** — read-only, runs `build_tokens.py --check` |
+| 30 | no `brand.json` | Apply the design system to this project | **asks** — the retrofit path writes UI, so it needs a brand |
+
+## Custom brand colour
+
+| # | Prompt | Expected |
+|---|---|---|
+| 31 | Our brand colour is `#FFFF00` | accepted and adapted (accent `#777700`), audit passes, no warning |
+| 32 | Our brand colour is `#808080` | accepted, warns that the accent is near-neutral, **exit 0** — not a hard failure |
+
+## Table alignment
+
+| # | Prompt | Expected |
+|---|---|---|
+| 33 | Build an invoices table with amounts | `ds-num` on the `th` **and** every `td` of the amount column |
+| 34 | ...with an invoice-number column | invoice number stays **left** — it is an identifier, not a quantity |
+
+Both are checkable without reading the output by eye: run
+`lint_conformance.py` on the generated markup and look for
+`table-column-alignment-split`.
+
 ## Should NOT trigger
 
 | # | Prompt | Why |
