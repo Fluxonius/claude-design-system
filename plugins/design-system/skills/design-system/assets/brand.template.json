@@ -10,7 +10,7 @@
   "borderWeight": "hairline",
   "prefix": "ds",
   "$options": {
-    "primary": "any chromatic hex; greyscale is rejected",
+    "primary": "any hex; the hue is kept and chroma clamped to the house range. Greyscale has no usable hue, so it adapts to a near-neutral accent and warns",
     "radius": ["sharp", "soft", "round"],
     "density": ["default", "compact"],
     "iconSet": ["phosphor", "lucide", "remix"],

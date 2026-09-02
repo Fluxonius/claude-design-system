@@ -273,6 +273,64 @@ TW_RADIUS_RX = re.compile(r"^(?:\w+:)*rounded(?:-[trbl]{1,2})?(?:-([\w]+))?$")
 TW_TEXT_RX = re.compile(r"^(?:\w+:)*text-([\w]+)$")
 
 
+# --- table column alignment ------------------------------------------------
+# Alignment is a property of the COLUMN, so the class has to appear on the
+# header cell AND on every body cell beneath it. Put it on one and not the
+# other and the column silently splits -- a right-aligned figure under a
+# left-aligned label. The stylesheet welds `th` and `td` together, but it
+# cannot make an author write both class attributes; this check does.
+TABLE_RX = re.compile(r"<table\b[^>]*>(.*?)</table>", re.S | re.I)
+THEAD_RX = re.compile(r"<thead\b[^>]*>(.*?)</thead>", re.S | re.I)
+TBODY_RX = re.compile(r"<tbody\b[^>]*>(.*?)</tbody>", re.S | re.I)
+ROW_RX = re.compile(r"<tr\b[^>]*>(.*?)</tr>", re.S | re.I)
+CELL_RX = re.compile(r"<(th|td)\b([^>]*)>", re.I)
+
+
+def _cell_alignment(attrs, prefix):
+    """The alignment-bearing classes on one cell, as a frozenset."""
+    cm = CLASS_ATTR_RX.search(attrs)
+    classes = set(cm.group(1).split()) if cm else set()
+    return frozenset(classes & {f"{prefix}-num", f"{prefix}-table-actions"})
+
+
+def check_table_alignment(text, prefix, add):
+    for tm in TABLE_RX.finditer(text):
+        block = tm.group(1)
+        if f"{prefix}-table" not in tm.group(0):
+            continue
+        # colspan/rowspan break positional column matching -- skip rather than
+        # report a column index that does not mean what it says.
+        if re.search(r"\b(?:colspan|rowspan)\s*=", block, re.I):
+            continue
+        head = THEAD_RX.search(block)
+        body = TBODY_RX.search(block)
+        if not head or not body:
+            continue
+        head_row = ROW_RX.search(head.group(1))
+        if not head_row:
+            continue
+        headers = [_cell_alignment(c.group(2), prefix)
+                   for c in CELL_RX.finditer(head_row.group(1))]
+        for row in ROW_RX.finditer(body.group(1)):
+            cells = [(c.group(2), c.start()) for c in CELL_RX.finditer(row.group(1))]
+            if len(cells) != len(headers):
+                break          # ragged table; positional matching is unsafe
+            for i, (attrs, _) in enumerate(cells):
+                want, got = headers[i], _cell_alignment(attrs, prefix)
+                if want == got:
+                    continue
+                only_head = ", ".join(sorted(want - got)) or "nothing"
+                only_cell = ", ".join(sorted(got - want)) or "nothing"
+                add(tm.start() + body.start() + row.start(),
+                    "table-column-alignment-split",
+                    f"column {i + 1} is aligned inconsistently -- the header "
+                    f"carries {only_head} and the body cell carries "
+                    f"{only_cell}. Alignment belongs to the whole column, so "
+                    f"the class goes on the th and on every td beneath it",
+                    row.group(0)[:70])
+            break              # one body row is enough to prove the contract
+
+
 def check_tailwind(text, add, sys_role_names=frozenset()):
     for m in CLASS_ATTR_RX.finditer(text):
         base = m.start()
@@ -497,6 +555,9 @@ def lint_file(path: Path, sys_: System):
 
     # --- component class combinations -------------------------------------
     check_combinations(text, sys_.prefix, add)
+
+    # --- table columns aligned as a unit -----------------------------------
+    check_table_alignment(text, sys_.prefix, add)
 
     # --- colour override on a component ----------------------------------
     for m in COMPONENT_OVERRIDE.finditer(text):

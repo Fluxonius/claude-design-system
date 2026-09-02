@@ -29,23 +29,46 @@ personalization — that is a different design system. Say so.
 
 Look for `brand.json` at the project root (also check `design/`, `src/`, `.config/`).
 
-- **Found** → read it, run the generator (step 3), build.
-- **Not found** → **do not block**. Build immediately using house defaults
-  (`assets/brand.template.json`), then mention once, at the end:
-  > Built on house defaults. Want to run brand setup so this matches your product?
+- **Found** → read it, run the generator (step 3), build. Ask nothing.
+- **Not found** → **ask before building.** Do not choose for the user, and do
+  not build first and ask afterwards.
+
+  > This project has no `brand.json` yet. Two options:
+  >
+  > 1. **House defaults** — slate blue `#3D5A80`, Geist (`grotesk`), soft
+  >    corners, default density, Lucide icons, hairline borders.
+  > 2. **Customize** — six questions, starting with your own brand hex.
+
+  Either answer writes `brand.json` to the project root, so the question is
+  asked **once per project, never again**:
+
+  - House defaults → `python3 scripts/build_tokens.py --defaults > brand.json`
+  - Customize → step 2, then write the answers
+
+  Then continue at step 4.
+
+**The gate is scoped to building.** Ask only when the task will produce or
+restyle UI — that includes the retrofit path in step 3. Never ask for read-only
+work: a contrast check, `lint_conformance.py`, `check_drift.py`, or a question
+about the system all run against an explicit brand or house defaults, silently.
+A user who asked "is this palette accessible?" did not ask to be onboarded.
 
 The house default is a muted slate blue (`#3D5A80`) with the `grotesk` preset —
 deliberately *not* indigo-600 + Inter. That pairing is the most recognisable
 AI-default look there is, so it must never be what the no-config path produces.
 
-Never re-offer setup more than once per conversation.
+Ask once per project. Once `brand.json` exists, read it and build.
 
-### 2. Run setup (only when the user asks for it)
+### 2. Run setup (when the user picks Customize, or asks later)
 
 Ask these six, conversationally, in one or two batches. Never more than six.
 
-1. **Primary colour** — one hex. Must be chromatic; greyscale is rejected by the
-   generator because the neutral ramp is already locked warm grey.
+1. **Primary colour** — any brand hex; it is adapted, not vetted. The generator
+   keeps the *hue*, clamps chroma into the house range and takes lightness from
+   the locked ramp, so a custom colour cannot produce a contrast failure —
+   `#FFFF00` resolves to accent `#777700`. A greyscale hex has no usable hue, so
+   it is adapted to a near-neutral accent at the neutral hue and warns that
+   links, focus and selection will read as grey.
 2. **Typefaces** — offer the three presets first; most users should take one.
    - `grotesk` — Geist / Geist / Geist Mono (default; precise, neutral)
    - `editorial` — Instrument Serif / Inter / IBM Plex Mono
@@ -129,7 +152,9 @@ python scripts/build_tokens.py brand.json --out-dir ./src/styles
 
 Emits `tokens.css` (CSS custom properties, light + dark) and `tokens.json`
 (for non-web platforms). Prints a WCAG AA contrast audit and **exits non-zero
-if any pair fails** — if it fails, the primary colour is the problem, not the system.
+if any pair fails**. The brand colour cannot be the cause — hue is the only
+thing carried over from it, and the audit is hue-invariant — so a failure means
+the role table or a ramp step was edited.
 
 Contrast audit alone: `python scripts/build_tokens.py brand.json --check`
 

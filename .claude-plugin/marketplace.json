@@ -11,7 +11,7 @@
       "displayName": "Design System — generate, apply, enforce",
       "source": "./plugins/design-system",
       "description": "Generate a contrast-audited design system from one brand file, apply it to a new or existing project, and enforce conformance in code.",
-      "version": "0.9.0",
+      "version": "0.10.0",
       "author": {
         "name": "Fluxonius"
       },
